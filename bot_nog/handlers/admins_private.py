@@ -97,20 +97,21 @@ class AdminState(StatesGroup):
     description = State()
     price = State()
     image = State()
-    texts = {
+    texts = {   #для реализации шага назад, чтобы знать где находимся и какой предыдущий шаг
         "AdminState:name": "Введите название заново:",
         "AdminState:description": "Введите описание заново:",
         "AdminState:price": "Введите стоимость заново:",
         "AdminState:image": "Этот стейт последний, поэтому...",
     }
 
-
+#ловим нажатие кнопрки "добавить товар" и становимся в ожидание ввода названия name
 @admin_router.message(StateFilter(None), (F.text.lower() == "добавить товар"))
 async def add_product(message: Message, state: FSMContext):
     await message.answer("Введите название", reply_markup=ReplyKeyboardRemove())
     await state.set_state(AdminState.name)
 
-
+#реализуем ввод отмены
+#и очищаем state (это фактически словарь в котором сохроняються введённые состояния)
 @admin_router.message(StateFilter("*"), Command("отмена"))
 @admin_router.message(StateFilter("*"), F.text.casefold() == "отмена")
 async def cancel(message: Message, state: FSMContext):
@@ -120,7 +121,7 @@ async def cancel(message: Message, state: FSMContext):
     await state.clear()
     await message.answer("Отмена", reply_markup=ADMIN_KB)
 
-
+#реализуем ввод назад
 @admin_router.message(StateFilter("*"), Command("назад"))
 @admin_router.message(StateFilter("*"), F.text.casefold() == "назад")
 async def back_step_handler(message: Message, state: FSMContext) -> None:
@@ -142,14 +143,14 @@ async def back_step_handler(message: Message, state: FSMContext) -> None:
             return
         previous = step
 
-
+#ловим введённое название и ждём введение описания и добовляем инфу в state
 @admin_router.message(AdminState.name, F.text)
 async def add_name(message: Message, state: FSMContext):
     await state.update_data(name=message.text)
     await message.answer("Введите описание")
     await state.set_state(AdminState.description)
 
-
+#аналогично
 @admin_router.message(AdminState.description, F.text)
 async def add_description(message: Message, state: FSMContext):
     await state.update_data(description=message.text)
@@ -163,7 +164,7 @@ async def add_prise(message: Message, state: FSMContext):
     await message.answer("Загрузите изображение товара")
     await state.set_state(AdminState.image)
 
-
+#ловим фото и получем из state словарь котрый и передём в ORM для добавления в БД
 @admin_router.message(AdminState.image, F.photo)
 async def add_prise(message: Message, state: FSMContext, session: AsyncSession):
     await state.update_data(image=message.photo[-1].file_id)

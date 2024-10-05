@@ -1,3 +1,4 @@
+#создание таблиц с "алхимией" в декларотивном стиле
 from datetime import datetime
 
 from sqlalchemy import BigInteger, DateTime, ForeignKey, Numeric, String, Text, func

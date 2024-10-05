@@ -6,8 +6,9 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from util.calendar_list import DAYS_WEEK, MONTH_YEAR, CalendarForInline
 
-
-class MenuCallBack(CallbackData, prefix="menu"):  #класс для фабрики Callback (что возвращает callback_data в inlain кнопке)
+#класс для фабрики Callback (что возвращает callback_data с нажатии inlain кнопки)
+#позволяет фильтровать события по префиксу menu: и (level, menu_name, key_word, month_day, day_hours)
+class MenuCallBack(CallbackData, prefix="menu"):  
     level: int
     menu_name: str | None = None
     key_word: str | None = None
@@ -17,7 +18,7 @@ class MenuCallBack(CallbackData, prefix="menu"):  #класс для фабри�
     page: int = 1
     month_change: int = 0
 
-
+#########################инлайн кнопки для различных уровней меню####################################
 def get_user_main_btns(*, level: int, sizes: tuple[int] = (2,)):
     keyboard = InlineKeyboardBuilder()
     btns = {

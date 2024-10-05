@@ -1,3 +1,4 @@
+# создание фильтров для проверки типа чата
 from aiogram.filters import Filter
 from aiogram import Bot, types
 

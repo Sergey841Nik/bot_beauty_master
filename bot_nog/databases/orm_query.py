@@ -1,3 +1,4 @@
+#работа с БД без чистого SQL, но в "питончем" стиле
 from datetime import datetime
 
 from sqlalchemy import select, update, delete
@@ -109,8 +110,8 @@ async def orm_delete_products(session: AsyncSession, product_id: int):
 ############### Работа с баннерами (информационными страницами) из БД ###############
 
 async def orm_add_banner(session: AsyncSession, data: dict):
-    #Добавляем новый или изменяем существующий по именам
-    #пунктов меню: start, calendar, hour, records
+    #Добавляем пнкты меню из пунктов меню: start, calendar, hour, records 
+    #из commands/texst_to_level.py
     query = select(Banner)
     result = await session.execute(query)
     if result.first():
@@ -120,6 +121,7 @@ async def orm_add_banner(session: AsyncSession, data: dict):
 
 
 async def orm_change_banner_image(session: AsyncSession, name: str, image: str):
+    #добовляем картинки меню или меняем их
     query = update(Banner).where(Banner.name == name).values(image=image)
     await session.execute(query)
     await session.commit()
@@ -132,6 +134,7 @@ async def orm_get_banner(session: AsyncSession, level: str):
 
 
 async def orm_get_info_level(session: AsyncSession):
+    #для формирования списка с уравнями меню (колонка name в БД Banner)
     query = select(Banner.name)
     result = await session.execute(query)
     return result.scalars().all()

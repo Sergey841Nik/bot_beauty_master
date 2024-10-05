@@ -17,7 +17,9 @@ async def create_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)  # создаются ВСЕ таблицы прописаные models.py
     async with session_maker() as session:
-        await orm_add_banner(session=session, data=description_for_info_level)
+        #добовляем колонки name и description в таблицу с банарами, чтобы удобней было добовлять по описанию
+        #в принципе нужно только в первый раз или при изменениии уровней меню
+        await orm_add_banner(session=session, data=description_for_info_level) 
 
         
 

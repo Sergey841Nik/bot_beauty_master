@@ -1,3 +1,5 @@
+#Чат позвотеля. Реализовани с помощью фабрики коллбеков
+
 from aiogram import F, Router
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import CommandStart
@@ -13,9 +15,9 @@ from handlers.menu_process import get_menu_content
 
 
 user_privat_router = Router()
-user_privat_router.message.filter(ChatTypeFilter(["private"]))
+user_privat_router.message.filter(ChatTypeFilter(["private"])) #фильтр для чата (какого он типа в данном случаее private)
 
-
+#Команда "/start"для запуска меню
 @user_privat_router.message(CommandStart())
 async def start_cmd(message: Message, state: FSMContext, session: AsyncSession) -> None:
     media, reply_markup = await get_menu_content(
@@ -26,7 +28,7 @@ async def start_cmd(message: Message, state: FSMContext, session: AsyncSession) 
         media.media, caption=media.caption, reply_markup=reply_markup
     )
 
-
+#Занесение информации о пользователе и времени его записи в БД
 async def add_to_write_in_bd(
     callback: CallbackQuery, info_record: dict, session: AsyncSession
 ) -> None:
@@ -47,7 +49,7 @@ async def add_to_write_in_bd(
             hour=info_record["hour"],
             product_id=info_record["product_id"],
         )
-    except SQLAlchemyError:
+    except SQLAlchemyError: #исключение ошибки если запись уже есть
         await callback.answer(
             f"Что то пошло не так\nВозможно кто-то опередил Вас\nпопробуйте записатся на другое время\nили перезапустить бота (menu->/start)",
             show_alert=True,
@@ -67,18 +69,21 @@ async def user_menu(
     state: FSMContext,
     session: AsyncSession,
 ) -> None:
+#обработка события при нажатии на пустую кнопку
     if callback_data.key_word == "busy":
         await callback.answer("Занято", show_alert=True)
 
     _dict_state = await state.get_data()
 
+#обработка события при нажатии кнопки записи
     if callback_data.key_word == "record": 
         await add_to_write_in_bd(
             callback=callback, info_record=_dict_state, session=session
         )
         await state.clear()
 
-    if callback_data.key_word == "delete":
+#удаление записи пользователем из БД
+    if callback_data.key_word == "delete": 
         await orm_delete_record(session, callback_data.product_id)
 
 #сохранение данных для записи в БД
