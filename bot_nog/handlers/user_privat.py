@@ -15,7 +15,7 @@ from handlers.menu_process import get_menu_content
 
 
 user_privat_router = Router()
-user_privat_router.message.filter(ChatTypeFilter(["private"])) #фильтр для чата (какого он типа в данном случаее private)
+user_privat_router.message.filter(ChatTypeFilter(["private"])) #фильтр для чата (какого он типа в данном случае private)
 
 #Команда "/start"для запуска меню
 @user_privat_router.message(CommandStart())

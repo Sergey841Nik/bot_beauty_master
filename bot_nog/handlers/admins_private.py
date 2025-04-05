@@ -129,7 +129,7 @@ async def back_step_handler(message: Message, state: FSMContext) -> None:
 
     if current_state == AdminState.name:
         await message.answer(
-            'Предидущего шага нет, или введите название товара или напишите "отмена"'
+            'Предыдущего шага нет, или введите название товара или напишите "отмена"'
         )
         return
 

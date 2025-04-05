@@ -14,7 +14,7 @@ from commands.bot_cmds_list import privat
 from handlers.user_privat import user_privat_router
 from handlers.admins_private import admin_router
 
-bot = Bot(token=os.getenv("TOKEN"), parse_mode=ParseMode.HTML)  #зауск бота 
+bot = Bot(token=os.getenv("TOKEN"), parse_mode=ParseMode.HTML)  #запуск бота 
 
 dp = Dispatcher()
 
